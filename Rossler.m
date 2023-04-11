@@ -28,7 +28,7 @@ function [A,B,N] = Rossler(a,c)
   end
 
   if (~exist('c','var'))
-    c = 5.7;
+    c = 14.0;
   end
   
   A = [  0    -1   -1  ; ...
