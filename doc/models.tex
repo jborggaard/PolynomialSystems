@@ -1,0 +1,145 @@
+\documentclass[11pt, oneside]{article}   	% use "amsart" instead of "article" for AMSLaTeX format
+\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                   		% ... or a4paper or a5paper or ... 
+%\geometry{landscape}                		% Activate for rotated page geometry
+%\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}				% Use pdf, png, jpg, or eps§ with pdflatex; use eps in DVI mode
+								% TeX will automatically convert eps --> pdf in pdflatex		
+\usepackage{amssymb}
+\usepackage{tikz}
+
+% Kronecker symbol
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+\node[shape=circle, draw, inner sep=0.6pt] (char) {#1};}
+}
+\newcommand\kronF[2]{#1^{\circled{\tiny{#2}}}}
+
+
+\title{Polynomial Systems}
+\author{Jeff Borggaard}
+%\date{}							% Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+\section{Introduction}
+This document provides a basic description of the polynomial systems provided by the {\tt PolynomialSystems} repository.  All of the systems have the generic form:
+%
+\begin{displaymath}
+  \dot{\bf x} = {\bf A}{\bf x} + {\bf B}{\bf u} + \sum_{k=2}^{K} {\bf N}_k \kronF{{\bf x}}{k} + \sum_{\ell=1}^{L} {\bf G}_{\ell} \kronF{{\bf x}}{$\ell$}\otimes{\bf u}
+\end{displaymath}
+%
+where ${\bf A}: \mathbb{R}^n\rightarrow\mathbb{R}^n$, ${\bf B}:\mathbb{R}^m\rightarrow\mathbb{R}^n$, ${\bf N}_k: \mathbb{R}^{n^k}\rightarrow\mathbb{R}^n$ and ${\bf G}_l: \mathbb{R}^{n^l m}\rightarrow\mathbb{R}^n$ (thus ${\bf x}(t)\in \mathbb{R}^n$ and ${\bf u}(t)\in \mathbb{R}^m$ for all $t>0$).
+
+For some examples, initial conditions ${\bf x}(0) = {\bf x}_0\in\mathbb{R}^n$ and an output matrix ${\bf C}: \mathbb{R}^n\rightarrow\mathbb{R}^p$ are also provided.
+
+
+\section{Lorenz63 equations}
+
+The Lorenz equations were presented in 1963 as a low-dimensional model of the convection in atmospheric flows.  The equations have the form (with an added control term in the first equation)
+%
+\begin{eqnarray*}
+  \dot{x}_1 &=& \sigma(x_2-x_1) + u \\
+  \dot{x}_2 &=& x_1(\rho-x_3) - x_2 \\
+  \dot{x}_3 &=& x_1x_2 - \beta x_3.
+\end{eqnarray*}
+%
+These can be written in the generic form by defining
+%
+\begin{displaymath}
+  {\bf A} = \left[ \begin{array}{ccc} 
+    -\sigma & \sigma & 0 \\
+    \rho    & -1     & 0 \\
+    0       &  0     & -\beta
+    \end{array} \right],
+  {\bf B} = \left[ \begin{array}{c} 1 \\ 0 \\ 0 \end{array} \right],
+  {\bf N} = \left[ \begin{array}{ccccccccc} 
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 &-\frac{1}{2} & 0 & 0 & 0 & -\frac{1}{2} & 0 & 0 \\
+        0 & \frac{1}{2} & 0 & 0 & \frac{1}{2} & 0 & 0 & 0 & 0
+        \end{array}\right]
+\end{displaymath}
+
+Standard values for this model are used as default: $\sigma=10$, $\beta=28$, and $\beta=8/3$.  Note that the
+$-x_1x_3$ term in the second row of ${\bf N}$ and $x_1x_2$ term in the third row of ${\bf N}$ are symmetrically
+defined (e.g., the same coefficient for $x_1x_3$ as $x_3x_1$ in the ${\bf x}\otimes{\bf x}$ term).
+
+The provided Matlab function returns these matrices by defining values of $\sigma$, $\rho$, and $\beta$ (all optional) and using the call:
+
+\begin{verbatim}
+  [A,B,N] = Lorenz63(sigma,rho,beta);
+\end{verbatim}
+
+\section{Lorenz96 equations}
+
+In further studies, Lorenz looked at a scalable version of his 1963 model.  This model has the form
+%
+\begin{eqnarray*}
+  \dot{x_1} &=& (x_2-x_{n-1})x_n     - x_1 + u\\
+  \dot{x_2} &=& (x_3-x_{n  })x_1     - x_2 + u\\
+  \dot{x_3} &=& (x_4-x_1    )x_2     - x_3 + u \\
+    \vdots\hspace{.05in}  &=& \hspace{0.5in}  \vdots\\
+  \dot{x_n} &=& (x_1-x_{n-2})x_{n-1} - x_n + u\\
+\end{eqnarray*}
+%
+for integer values of $n\geq 4$.  With the exception of the modified control term, the $n=4$ model matches
+the Lorenz 1963 model (with unit constants).
+
+The provided Matlab function returns matrices in the standard form for any $n\geq 4$ using
+%
+\begin{verbatim} 
+  [A,B,N] = Lorenz96(n);
+\end{verbatim}
+
+\section{The cart-pole model}
+
+This is a classical underactuated model problem for control studies.  The model consists of a translating cart
+that seeks to balance an inverted pendulum (see Figure).  The full model (as derived in
+\cite{florian2007correct}) is nonlinear and given by
+%
+\begin{eqnarray*}
+   2\ddot{x} + \ddot{\theta}\cos(\theta) - \dot{\theta}^2\sin(\theta) &=& u(t) \\
+   \ddot{x}\cos{\theta} + \ddot{\theta} + \sin{\theta}                &=& 0
+\end{eqnarray*}
+
+If we define $x_1=x$, $x_2=\dot{x}$, $x_3=\theta$, and $x_4=\dot{\theta}$, we can write this as a first order 
+system of the form
+%
+\begin{displaymath}
+  \dot{\bf x} = \left[ \begin{array}{c}
+        x_2 \\ 
+        r\ell x_4^2\sin(x_3) - r\cos(x_3)\frac{g\sin(x_3)-\frac{1}{2}r\ell x_4^2\sin(2x_3)}{(4/3-r\cos^2(x_3))} \\
+        x_4 \\
+        \frac{g\sin(x_3)-\frac{1}{2}r\ell x_4^2\sin(2x_3)}{\ell(4/3-r\cos^2(x_3))} 
+        \end{array} \right] +
+        \left[ \begin{array}{c}
+        0 \\
+        \frac{r}{m}+\frac{r^2\cos^2(x_3)}{m(4/3-r\cos^2(x_3))} \\
+        0 \\
+        -\frac{r\cos(x_3)}{m\ell(4/3-r\cos^2(x_3)} 
+        \end{array} \right] u(t)
+\end{displaymath} 
+        
+\section{The acrobot model}
+
+Another underactuated model problem.  The model consists of two connected links with one end pinned to the
+origin.  The actuation occurs through a torque applied at the joint between the two links (see Figure).  The
+full model (as derived in \cite{tedrake2023underactuated}) is nonlinear and given by
+%
+\begin{displaymath}
+  M(q)\ddot{q} + C(q,\dot{q})\dot{q} = \tau_g(q) + Bu
+\end{displaymath}
+%
+where
+%
+\begin{eqnarray*}
+  M(q) &=& \left[ \begin{array}{cc} I_1 + I_2 + m_2 \ell_1^2 + m_2\ell_1\ell_2\cos(\theta_2) & I_2+m_2\ell_1\ell_2\cos(\theta_2)/2 \\
+  I_2+m_2\ell_1\ell_2\cos(\theta_2)/2 & I_2 \end{array} \right],\\
+  C(q,\dot{q}) &=& \left[ \begin{array}{cc} -m_2\ell_1\ell_2\sin(\theta_2)\dot{\theta}_2 & -m_2\ell_1\ell_2\sin(\theta_2)\dot{\theta}_2/2 \\
+  m_2\ell_1\ell_2\sin(\theta_2)\dot{\theta}_1/2 & 0 \end{array} \right], \\
+  \tau_g(q) &=& \left[ \begin{array}{c} -m_1g\ell_1\sin(\theta_1)/2 - m_2 g(\ell_1\sin(\theta_1)+\ell_2\sin(\theta_1+\theta_2)/2 \\ -m_2g\ell_2\sin(\theta_1+\theta_2)/2 \end{array} \right],
+  \qquad B = \left[ \begin{array}{c} 0 \\ 1 \end{array} \right].
+\end{eqnarray*}
+
+\bibliographystyle{alpha}
+\bibliography{refs}
+\end{document}  
