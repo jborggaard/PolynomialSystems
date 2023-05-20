@@ -5,11 +5,11 @@ function [A,B,Nxx,Nxu] = cartpolePolynomial(m,M,L,g)
 %  while g is the gravitational constant.  The full-order model has the
 %  form
 %      \dot{x} = [ x(2);
-%                  r*l*x(4)^2*sin(x(3)) -
-%                  r*l*cos(x(3))/(l*(4/3)-r*cos(x(3))^2)*(g*sin(x(3) -
-%                  l*r*x(4)^2*sin(2*x(3))/2;
+%                  r*L*x(4)^2*sin(x(3)) -
+%                  r*L*cos(x(3))/(L*(4/3)-r*cos(x(3))^2)*(g*sin(x(3) -
+%                  L*r*x(4)^2*sin(2*x(3))/2;
 %                  x(4);
-%                  (g*sin(x(3))-l*r*x(4)^2*sin(2*x(3))/2)/(l*(4/3-r*cos^2(x(3)))
+%                  (g*sin(x(3))-L*r*x(4)^2*sin(2*x(3))/2)/(L*(4/3-r*cos^2(x(3)))
 %                ] + B(x)*u
 %   
 %  This function returns a polynomial approximation to this system of the
