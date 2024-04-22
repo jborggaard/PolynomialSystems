@@ -1,2 +1,2 @@
-addpath('/Volumes/borggaard/Software/MyPublicSoftware/QQR')
-addpath('/Volumes/borggaard/Software/MyPublicSoftware/KroneckerTools')
+addpath('/Volumes/borggaard4/Software/MyPublicSoftware/QQR')
+addpath('/Volumes/borggaard4/Software/MyPublicSoftware/KroneckerTools')

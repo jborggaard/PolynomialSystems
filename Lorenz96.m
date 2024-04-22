@@ -47,8 +47,6 @@ function [A,B,N] = Lorenz96(n)
 
   N = zeros(n,n^2);
   for i=1:n
-    idx1(i+1,i-1)
-    idx2(i+1,i-1)
     N(i,idx1(i+1,i-1)) =  0.5;  N(i,idx2(i+1,i-1)) =  0.5;
     N(i,idx1(i-2,i-1)) = -0.5;  N(i,idx2(i-2,i-1)) = -0.5;
   end

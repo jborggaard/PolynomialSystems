@@ -107,4 +107,37 @@ function [A,B,Nxx,Nxu] = acrobotPolynomial(x0,parameters)
   
   Nxu{2} = double(subs(B2,{x1,x2,x3,x4},x0.'));
 
+  %  For higher degree term approximations
+  for j=1:4
+    for i=1:64
+      N4(:,i+64*(j-1)) = diff(N3(:,i),x(j));
+    end
+  end
+
+  N4 = N4/4;
+
+  Nxx{4} = double(subs(N4,{x1,x2,x3,x4},x0.'));
+
+  B3 = [diff(B2,x1) diff(B2,x2) diff(B2,x3) diff(B2,x4)];
+
+  B3 = B3/3;
+
+  Nxu{3} = double(subs(B3,{x1,x2,x3,x4},x0.'));
+
+  for j=1:4
+    for i=1:256
+      N5(:,i+256*(j-1)) = diff(N4(:,i),x(j));
+    end
+  end
+
+  N5 = N5/5;
+
+  Nxx{5} = double(subs(N5,{x1,x2,x3,x4},x0.'));
+
+  B4 = [diff(B3,x1) diff(B3,x2) diff(B3,x3) diff(B3,x4)];
+
+  B4 = B4/4;
+
+  Nxu{4} = double(subs(B4,{x1,x2,x3,x4},x0.'));
+  
 end

@@ -1,4 +1,4 @@
-function [A,B,N] = vanderPolRing(g,a,b,c)
+function [A,B,N] = vanderPolRing(g,Cidx,a,b)
 %-------------------------------------------------------------------------------
 %vanderPolRing returns a polynomial system for a ring of van der Pol oscillators
 %
@@ -31,6 +31,11 @@ function [A,B,N] = vanderPolRing(g,a,b,c)
 %  >> [A,B,N] = vanderPolRing(8,[1 3]);
 %  >> rhs = @(t,x) A*x + N{3}*kron(kron(x,x),x);  % open loop system
 %
+%  is a ring of 8 oscillators where the control is applied to the first and
+%  third oscillators.  Due to the periodicity in the ring, the value function
+%  would be the same from [2 4], [3 5], etc. assuming the initial conditions
+%  are similarly shifted.
+%
 %  Author: Jeff Borggaard
 %
 %  License: MIT
@@ -41,7 +46,10 @@ function [A,B,N] = vanderPolRing(g,a,b,c)
 %%
   if ( ~exist('g','var') )
     g      = 4;    % number of van der Pol oscillators
-    Cidx   = [1 2];
+  end
+
+  if ( ~exist('Cidx','var') )
+    Cidx = [1 2];
   end
 
   n      = 2*g;
